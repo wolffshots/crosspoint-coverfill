@@ -24,6 +24,9 @@ import (
 
 const cacheRoot = "/.crosspoint"
 
+// version is overridden at release build time via -ldflags "-X main.version=...".
+var version = "dev"
+
 type client struct {
 	base string
 	http *http.Client
@@ -238,7 +241,13 @@ func main() {
 	width := flag.Int("width", 480, "screen width in portrait")
 	height := flag.Int("height", 800, "screen height in portrait")
 	dryRun := flag.Bool("n", false, "dry run: report what would change, upload nothing")
+	showVersion := flag.Bool("version", false, "print the version")
 	flag.Parse()
+
+	if *showVersion {
+		fmt.Println("coverfill", version)
+		return
+	}
 
 	base := strings.TrimRight(*host, "/")
 	if !strings.Contains(base, "://") {

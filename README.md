@@ -20,6 +20,37 @@ In Fit mode the BMP has the screen width or the screen height, but not both. For
 
 The padded BMP keeps the 2-bit gray palette and the dithering of the firmware. The device draws it with no new conversion.
 
+## Install
+
+### Homebrew (macOS / Linux)
+
+```sh
+brew install wolffshots/tap/coverfill
+```
+
+The formula builds from source through [wolffshots/homebrew-tap](https://github.com/wolffshots/homebrew-tap).
+
+### Scoop (Windows)
+
+```powershell
+scoop bucket add wolffshots https://github.com/wolffshots/scoop-bucket
+scoop install wolffshots/coverfill
+```
+
+Scoop installs the Windows x86-64 binary from the latest release through [wolffshots/scoop-bucket](https://github.com/wolffshots/scoop-bucket).
+
+### go install
+
+```sh
+go install github.com/wolffshots/crosspoint-coverfill@latest
+```
+
+This command installs the binary as `crosspoint-coverfill`. A binary from `go install` prints `coverfill dev` for `--version`.
+
+### Prebuilt binaries
+
+Download a binary from the [latest release](https://github.com/wolffshots/crosspoint-coverfill/releases/latest). The release has binaries for Linux x86-64, Windows x86-64 and macOS arm64, and a `checksums.txt` file.
+
 ## Use
 
 1. On the device, open File Transfer and join your Wi-Fi network.
@@ -42,6 +73,7 @@ coverfill -host 192.168.88.112
 | `-n` | off | Dry run. Report the changes and upload nothing. |
 | `-width` | `480` | The screen width in portrait |
 | `-height` | `800` | The screen height in portrait |
+| `-version` | off | Print the version and stop. |
 
 The exit code is 1 if a cover failed or the device did not answer.
 
@@ -78,3 +110,11 @@ go test ./...
 ```
 
 The tool uses the Go standard library only.
+
+## Release
+
+Push a tag that starts with `v`, for example `v0.1.0`. The release workflow runs the tests, builds the binaries, writes `checksums.txt` and makes the GitHub release.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
