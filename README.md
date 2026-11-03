@@ -85,6 +85,50 @@ CrossPoint deletes the cache of a book when you clear the cache or upload the bo
 
 A second run changes nothing for covers that are already full screen.
 
+## Run on a schedule with Docker
+
+The Docker image runs `coverfill` on a cron schedule for a list of devices. Each run calls `coverfill -host <address>` once for each device.
+
+The image is `ghcr.io/wolffshots/crosspoint-coverfill` for `linux/amd64` and `linux/arm64`. The tag `latest` is the latest release. A tag such as `0.2.0` or `0.2` pins a release.
+
+1. Give each device a fixed IP address in your router. The container cannot resolve `crosspoint.local`.
+2. Copy [compose.yaml](compose.yaml) to your server.
+3. Set the addresses and the schedule in `compose.yaml`.
+4. Start the container.
+
+```bash
+docker compose up -d
+```
+
+To update to a new release:
+
+```bash
+docker compose pull && docker compose up -d
+```
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `COVERFILL_HOSTS` | none, required | The device addresses, separated by spaces or commas |
+| `COVERFILL_SCHEDULE` | `*/5 * * * *` | A 5-field cron schedule |
+| `COVERFILL_ARGS` | empty | Extra flags for each run, for example `-n` or `-width 480 -height 800` |
+| `TZ` | `UTC` | The time zone of the schedule, for example `Europe/London` |
+
+The device answers only while File Transfer is open on it. At other times the log shows `device not reachable` for that device, and the next run tries again. A short schedule finds the device sooner.
+
+A run that starts while the previous run is busy does nothing.
+
+Read the log:
+
+```bash
+docker compose logs -f coverfill
+```
+
+Start a run now:
+
+```bash
+docker compose exec coverfill coverfill-all
+```
+
 ## Undo
 
 Delete the padded `cover_*.bmp` file in the File Transfer page, or send a request to the delete endpoint:
@@ -113,7 +157,19 @@ The tool uses the Go standard library only.
 
 ## Release
 
-Push a tag that starts with `v`, for example `v0.1.0`. The release workflow runs the tests, builds the binaries, writes `checksums.txt` and makes the GitHub release.
+Push a tag that starts with `v`, for example `v0.1.0`. The release workflow runs the tests, builds the binaries, writes `checksums.txt` and makes the GitHub release. The docker workflow builds the image and pushes it to `ghcr.io`.
+
+To publish an image of `main` with the tag `main`, run the docker workflow by hand:
+
+```bash
+gh workflow run docker.yml --ref main
+```
+
+Build the image locally:
+
+```bash
+docker build -t coverfill .
+```
 
 ## License
 

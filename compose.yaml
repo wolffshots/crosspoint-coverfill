@@ -1,0 +1,13 @@
+services:
+  coverfill:
+    image: ghcr.io/wolffshots/crosspoint-coverfill:latest
+    restart: unless-stopped
+    environment:
+      # Device addresses, separated by spaces or commas.
+      COVERFILL_HOSTS: "192.168.88.112 192.168.88.113"
+      # Standard 5-field cron schedule.
+      COVERFILL_SCHEDULE: "*/5 * * * *"
+      # Extra coverfill flags for every device, for example "-n" for a dry run.
+      COVERFILL_ARGS: ""
+      # Time zone of the schedule.
+      TZ: "UTC"
